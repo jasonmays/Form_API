@@ -8,123 +8,166 @@ const app = express();
 // Parse incoming requests data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  next();
+});
 
 // get all todos
-app.get('/api/v1/todos', (req, res) => {
+app.get('/api/v1/forms', (req, res) => {
   res.status(200).send({
     success: 'true',
-    message: 'todos retrieved successfully',
+    message: 'forms retrieved successfully',
     todos: db
   })
 });
 
 //get single todo
-app.get('/api/v1/todos/:id', (req, res) => {
+app.get('/api/v1/forms/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
-    db.map((todo) => {
-      if (todo.id === id) {
+    db.map((form) => {
+      if (form.id === id) {
         return res.status(200).send({
           success: 'true',
-          message: 'todo retrieved successfully',
+          message: 'form retrieved successfully',
           todo,
         });
       } 
   });
    return res.status(404).send({
      success: 'false',
-     message: 'todo does not exist',
+     message: 'form does not exist',
     });
 });
 
 //post a to do
-app.post('/api/v1/todos', (req, res) => {
-    if(!req.body.title) {
+app.post('/api/v1/forms', (req, res) => {
+    if(!req.body.firstname) {
       return res.status(400).send({
         success: 'false',
-        message: 'title is required'
+        message: 'firstname is required'
       });
-    } else if(!req.body.description) {
+    } else if(!req.body.lastname) {
       return res.status(400).send({
         success: 'false',
-        message: 'description is required'
+        message: 'lastname is required'
+      });
+    } else if(!req.body.email) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'email is required'
+      });
+    } else if(!req.body.communication) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'Communication is required'
       });
     }
    const todo = {
      id: db.length + 1,
-     title: req.body.title,
-     description: req.body.description
+     firstname: req.body.firstname,
+     lastname: req.body.lastname,
+     email: req.body.email,
+     organization: req.body.organization,
+     euresident: req.body.euresident,
+     communication: req.body.communication,
    }
    db.push(todo);
    return res.status(201).send({
      success: 'true',
-     message: 'todo added successfully',
-     todo
+     message: 'Thank you. You are now subscribed.',
    })
 });
 
 //update a to do
-app.put('/api/v1/todos/:id', (req, res) => {
+app.put('/api/v1/forms/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
-    let todoFound;
+    let formFound;
     let itemIndex;
-    db.map((todo, index) => {
-      if (todo.id === id) {
-        todoFound = todo;
+    db.map((form, index) => {
+      if (form.id === id) {
+        formFound = todo;
         itemIndex = index;
       }
     });
   
-    if (!todoFound) {
+    if (!formFound) {
       return res.status(404).send({
         success: 'false',
-        message: 'todo not found',
+        message: 'form not found',
       });
     }
   
-    if (!req.body.title) {
+    if(!req.body.firstname) {
       return res.status(400).send({
         success: 'false',
-        message: 'title is required',
+        message: 'firstname is required'
       });
-    } else if (!req.body.description) {
+    } else if(!req.body.lastname) {
       return res.status(400).send({
         success: 'false',
-        message: 'description is required',
+        message: 'lastname is required'
+      });
+    } else if(!req.body.email) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'email is required'
+      });
+    } else if(!req.body.organization) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'organization is required'
+      });
+    } else if(!req.body.euresident) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'EU Resident is required'
+      });
+    } else if(!req.body.communication) {
+      return res.status(400).send({
+        success: 'false',
+        message: 'Communication is required'
       });
     }
   
-    const updatedTodo = {
-      id: todoFound.id,
-      title: req.body.title || todoFound.title,
-      description: req.body.description || todoFound.description,
+    const updatedform = {
+      id: formFound.id,
+      firstname: req.body.firstname || formFound.firstname,
+      lastname: req.body.lastname || formFound.lastname,
+      email: req.body.email || formFound.email,
+      organization: req.body.organization || formFound.organization,
+      euresident: req.body.euresident,
+      communication: req.body.communication,
     };
   
-    db.splice(itemIndex, 1, updatedTodo);
+    db.splice(itemIndex, 1, updatedform);
   
     return res.status(201).send({
       success: 'true',
-      message: 'todo added successfully',
+      message: 'form added successfully',
       updatedTodo,
     });
 });
   
 
 //delete a to do
-app.delete('/api/v1/todos/:id', (req, res) => {
+app.delete('/api/v1/forms/:id', (req, res) => {
 const id = parseInt(req.params.id, 10);
 
-db.map((todo, index) => {
-    if (todo.id === id) {
+db.map((form, index) => {
+    if (form.id === id) {
         db.splice(index, 1);
         return res.status(200).send({
         success: 'true',
-        message: 'Todo deleted successfuly',
+        message: 'form deleted successfuly',
         });
     }
 });
     return res.status(404).send({
     success: 'false',
-    message: 'todo not found',
+    message: 'form not found',
     });
 
 });

@@ -1,8 +1,12 @@
 const todos =  [
     {
       id: 1,
-      title: "lunch",
-      description: "Go for lunc by 2pm"
+      firstname: "Jason",
+      lastname: "Mays",
+      email: "jason@company.com",
+      organization: "Hero Digital",
+      euresident: "no",
+      communication: "alerts"
     }
 ];
 
